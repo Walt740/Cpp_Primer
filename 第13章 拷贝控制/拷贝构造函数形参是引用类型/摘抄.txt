@@ -1,0 +1,150 @@
+在C++中， 构造函数，拷贝构造函数，析构函数和赋值函数(赋值运算符重载)是最基本不过的需要掌握的知识。 但是如果我问你“拷贝构造函数的参数为什么必须使用引用类型？”这个问题， 你会怎么回答？ 或许你会回答为了减少一次内存拷贝？ 很惭愧的是，我的第一感觉也是这么回答。不过还好，我思索一下以后，发现这个答案是不对的。
+原因：
+       如果拷贝构造函数中的参数不是一个引用，即形如CClass(const CClass c_class)，那么就相当于采用了传值的方式(pass-by-value)，而传值的方式会调用该类的拷贝构造函数，从而造成无穷递归地调用拷贝构造函数。因此拷贝构造函数的参数必须是一个引用。
+       需要澄清的是，传指针其实也是传值，如果上面的拷贝构造函数写成CClass(const CClass* c_class)，也是不行的。事实上，只有传引用不是传值外，其他所有的传递方式都是传值。
+       先从一个小例子开始：（自己测试一下自己看看这个程序的输出是什么？）
+[cpp] view plaincopy
+#include<iostream>  
+using namespace std;  
+  
+class CExample  
+{  
+private:  
+    int m_nTest;  
+  
+public:  
+    CExample(int x) : m_nTest(x)      //带参数构造函数  
+    {   
+        cout << "constructor with argument"<<endl;  
+    }  
+  
+    // 拷贝构造函数，参数中的const不是严格必须的，但引用符号是必须的  
+    CExample(const CExample & ex)     //拷贝构造函数  
+    {  
+        m_nTest = ex.m_nTest;  
+        cout << "copy constructor"<<endl;  
+    }  
+  
+    CExample& operator = (const CExample &ex)   //赋值函数(赋值运算符重载)  
+    {     
+        cout << "assignment operator"<<endl;  
+        m_nTest = ex.m_nTest;  
+        return *this;  
+    }  
+  
+    void myTestFunc(CExample ex)  
+    {  
+    }  
+};  
+  
+int main(void)  
+{  
+    CExample aaa(2);  
+    CExample bbb(3);  
+    bbb = aaa;  
+    CExample ccc = aaa;  
+    bbb.myTestFunc(aaa);  
+  
+    return 0;     
+}  
+这个例子的输出结果是：
+[cpp] view plaincopy
+constructor with argument        // CExample aaa(2);  
+constructor with argument        // CExample bbb(3);  
+assignment operator              // bbb = aaa;  
+copy constructor                 // CExample ccc = aaa;  
+copy constructor                 //  bbb.myTestFunc(aaa);  
+如果你能一眼看出就是这个结果的话， 恭喜你，可以站起来扭扭屁股，不用再往下看了。
+如果你的结果和输出结果有误差， 那拜托你谦虚的看完。
+第一个输出： constructor with argument      // CExample aaa(2);
+如果你不理解的话， 找个人把你拖出去痛打一顿，然后嘴里还喊着“我是二师兄，我是二师兄.......”
+第二个输出：constructor with argument     // CExample bbb(3);
+分析同第一个
+第三个输出： assignment operator                // bbb = aaa;
+第四个输出： copy constructor                      // CExample ccc = aaa;
+这两个得放到一块说。 肯定会有人问为什么两个不一致。原因是， bbb对象已经实例化了，不需要构造，此时只是将aaa赋值给bbb，只会调用赋值函数，就这么简单，还不懂的话，撞墙去！ 但是ccc还没有实例化，因此调用的是拷贝构造函数，构造出ccc，而不是赋值函数，还不懂的话，我撞墙去！！
+ 
+第五个输出： copy constructor                      //  bbb.myTestFunc(aaa);
+实际上是aaa作为参数传递给bbb.myTestFunc(CExample ex)， 即CExample ex = aaa；和第四个一致的， 所以还是拷贝构造函数，而不是赋值函数， 如果仍然不懂， 我的头刚才已经流血了，不要再让我撞了，你就自己使劲的再装一次吧。
+通过这个例子， 我们来分析一下为什么拷贝构造函数的参数只能使用引用类型。
+看第四个输出： copy constructor                      // CExample ccc = aaa;
+构造ccc，实质上是ccc.CExample(aaa); 我们假如拷贝构造函数参数不是引用类型的话， 那么将使得 ccc.CExample(aaa)变成aaa传值给ccc.CExample(CExample ex)，即CExample ex = aaa，因为 ex 没有被初始化， 所以 CExample ex = aaa 继续调用拷贝构造函数，接下来的是构造ex，也就是 ex.CExample(aaa)，必然又会有aaa传给CExample(CExample ex), 即 CExample ex = aaa;那么又会触发拷贝构造函数，就这下永远的递归下去。
+所以绕了那么大的弯子，就是想说明拷贝构造函数的参数使用引用类型不是为了减少一次内存拷贝， 而是避免拷贝构造函数无限制的递归下去。
+附带说明，在下面几种情况下会调用拷贝构造函数：
+a、   显式或隐式地用同类型的一个对象来初始化另外一个对象。如上例中，用对象c初始化d；
+b、  作为实参(argument)传递给一个函数。如CClass(const CClass c_class)中，就会调用CClass的拷贝构造函数；
+c、  在函数体内返回一个对象时，也会调用返回值类型的拷贝构造函数；
+d、  初始化序列容器中的元素时。比如 vector<string> svec(5)，string的缺省构造函数和拷贝构造函数都会被调用；
+e、  用列表的方式初始化数组元素时。string a[] = {string(“hello”), string(“world”)}; 会调用string的拷贝构造函数。
+如果在没有显式声明构造函数的情况下，编译器都会为一个类合成一个缺省的构造函数。如果在一个类中声明了一个构造函数，那么就会阻止编译器为该类合成缺省的构造函数。和构造函数不同的是，即便定义了其他构造函数(但没有定义拷贝构造函数)，编译器总是会为我们合成一个拷贝构造函数。
+另外函数的返回值是不是引用也有很大的区别，返回的不是引用的时候，只是一个简单的对象，此时需要调用拷贝构造函数，否则，如果是引用的话就不需要调用拷贝构造函数。
+[cpp] view plaincopy
+#include<iostream>  
+using namespace std;  
+  
+class A  
+{  
+private:  
+    int m_nTest;  
+public:  
+    A()  
+    {  
+    }  
+    A(const A& other)    //构造函数重载  
+    {  
+        m_nTest = other.m_nTest;  
+        cout << "copy constructor"<<endl;    
+    }  
+    A & operator =(const A& other)  
+    {  
+        if(this != &other)  
+        {  
+            m_nTest = other.m_nTest;  
+            cout<<"Copy Assign"<<endl;  
+        }  
+        return *this;  
+    }  
+};  
+  
+A fun(A &x)  
+{  
+    return x;     //返回的不是引用的时候，需要调用拷贝构造函数  
+}  
+  
+int main(void)  
+{  
+    A test;  
+    fun(test);  
+    system("pause");  
+    return 0;  
+}  
+分享一道笔试题目，编译运行下图中的C++代码，结果是什么？（A）编译错误；（B）编译成功，运行时程序崩溃；（C）编译运行正常，输出10。请选择正确答案并分析原因。
+[cpp] view plaincopy
+class A  
+{  
+private:  
+    int value;  
+public:  
+    A(int n)  
+    {  
+        value = n;  
+    }  
+  
+    A(A other)  
+    {  
+        value = other.value;  
+    }  
+    void Print()  
+    {  
+        cout<<value<<endl;  
+    }  
+};  
+  
+int main(void)  
+{  
+    A a = 10;  
+    A b = a;  
+    b.Print();  
+    return 0;  
+}  
+答案：编译错误。在复制构造函数中传入的参数是A的一个实例。由于是传值，把形参拷贝到实参会调用复制构造函数。因此如果允许复制构造函数传值，那么会形成永无休止的递归并造成栈溢出。因此C++的标准不允许复制构造函数传值参数，而必须是传引用或者常量引用。在Visual Studio和GCC中，都将编译出错。

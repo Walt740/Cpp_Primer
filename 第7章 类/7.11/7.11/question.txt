@@ -1,0 +1,20 @@
+
+关于在构造函数中 string 对象的赋值问题
+
+如下代码片段，想将book赋值给bookNo，结果报错
+
+Sales_data::Sales_data(const std::string &book, unsigned num, const double sellp, const double salep)
+{
+	bookNo(book);
+	string bookNo1(book);
+}
+
+
+错误内容：
+严重性	代码	说明	项目	文件	行	禁止显示状态
+错误(活动)		在没有适当 operator() 的情况下调用类类型的对象或将函数转换到指向函数的类型	
+
+分析：
+string类 支持直接初始化和拷贝初始化，仅限于与初始化时用
+bookNo作为一个类内的成员变量，在定义时已经完成了初始化
+因此，能在赋值的时候使用初始化的方法。
