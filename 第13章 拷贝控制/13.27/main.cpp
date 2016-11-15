@@ -11,6 +11,8 @@ public:
     //拷贝构造函数拷贝所有三个数据成员，并递增计数器
     HasPtr(const HasPtr &p) : ps(p.ps),i(p.i),use(p.use){++*use;}
     HasPtr& operator= (const HasPtr&);
+    HasPtr& operator= (const string&); //赋予新的string
+    string &operator*(); //定义解引用运算符
     ~HasPtr();
 private:
     string *ps;
@@ -41,9 +43,27 @@ private:
      return *this;  //返回本对象
  }
 
+ HasPtr &HasPtr::operator= (const string &rhs)
+ {
+     *ps = rhs;
+     return *this;
+ }
+
+
+ string &HasPtr::operator *()
+ {
+     return *ps;
+ }
+
 
 int main()
 {
-
+    HasPtr h("hi mom！");
+    HasPtr h2 = h; // 未分配新的string，h2和h指向相同的string
+    h = "hi dad !";
+    h = h2;
+    h2 = "hi mom!";
+    cout << "h:" << *h <<endl;
+    cout << "h2:" << *h2 <<endl;
     return 0;
 }
