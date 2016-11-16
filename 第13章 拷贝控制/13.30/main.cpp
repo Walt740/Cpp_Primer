@@ -8,7 +8,13 @@ class HasPtr
 {
     friend void swap(HasPtr&,HasPtr&);
 public:
-    //HasPtr(const string &s = string()): ps(new string(s)),i(0) {}
+    /*
+    将一个右值绑定到一个非const的引用，会导致错误，因为如果是非const，则意味着可以通过s对这个右值进行修改，
+    对右值进行修改，显然是不合逻辑的（所谓右值，简单直观地就理解，就是只能放在等号右边，既然只能放在等号右边，
+    那就是只能读取不能写入），所以错了。而const string &s = string() 将右值绑定到一个const引用，是合理的，
+    只能读取，不能修改。
+    */
+    //HasPtr( string &s = string()): ps(new string(s)),i(0) {}
     HasPtr(const string &s = string()): ps(new string(s)), i(0) {} //构造函数
     HasPtr(HasPtr &rhs) : ps(new string(*rhs.ps)),i(rhs.i) {} //拷贝构造函数
     HasPtr &operator= (const HasPtr& rhs) //赋值运算符
