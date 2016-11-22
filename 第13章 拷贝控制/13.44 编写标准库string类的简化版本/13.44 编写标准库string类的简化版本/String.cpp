@@ -31,6 +31,17 @@ String &String::operator=(const String& rhs)
 	cout << "¿½±´¸³ÖµÔËËã·û" << endl;
 	return *this;
 }
+
+std::ostream &operator<< (std::ostream &os,const String &s)
+{
+    os << s.elements ;
+    return os;
+}
+
+
+
+
+
 String::~String()
 {
 	free();
