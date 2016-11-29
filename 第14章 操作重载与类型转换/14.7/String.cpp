@@ -32,13 +32,24 @@ String &String::operator=(const String& rhs)
 	return *this;
 }
 
-std::ostream &operator<< (std::ostream &os,const String &s)
+//std::ostream &operator<< (std::ostream &os,const String &s)
+//{
+//    os << s.elements ;
+//    return os;
+//}
+
+
+
+
+std::ostream &operator<< (std::ostream &os, const String &s)
 {
-    os << s.elements ;
-    return os;
+    char *c = const_cast<char*> (s.c_str());
+    while(*c)
+    {
+        os << *c++;
+    }
+    return os ;
 }
-
-
 
 
 

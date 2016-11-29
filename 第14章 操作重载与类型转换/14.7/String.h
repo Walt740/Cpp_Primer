@@ -7,7 +7,7 @@
 
 class String
 {
-    friend std::ostream &operator << (std::ostream &os,const String &s) ;
+    friend std::ostream& operator<< (std::ostream&,const String&);
 public:
 	//构造函数
 	String() : String("") {} //委托构造函数

@@ -3,11 +3,14 @@
 
 #include <memory>
 #include <iostream>
-
+#include <string.h>
 
 class String
 {
     friend std::ostream &operator << (std::ostream &os,const String &s) ;
+    friend bool operator== (const String &lhs,const String &rhs);
+    friend bool operator!= (const String &lhs,const String &rhs);
+
 public:
 	//构造函数
 	String() : String("") {} //委托构造函数
@@ -30,7 +33,6 @@ private:
 	std::allocator<char> alloc; //分配元素
 	char *elements;
 	char *end;
-
 
 };
 

@@ -39,14 +39,36 @@ std::ostream &operator<< (std::ostream &os,const String &s)
 }
 
 
-
-
+bool operator== (const String &lhs,const String &rhs)
+{
+     return strcmp(lhs.elements,rhs.elements);
+}
+bool operator!= (const String &lhs,const String &rhs)
+{
+    return !(lhs == rhs);
+}
+//String类的关系运算符就是比较两个字符串字典序的先后
+ bool operator< (const String &lhs,const String &rhs)
+ {
+     return strcmp(lhs.elements,rhs.elements) < 0
+ }
+ bool operator<=(const String &lhs,const String &rhs)
+ {
+     return strcmp(lhs.elements,rhs.elements) <= 0
+ }
+ bool operator> (const String &lhs,const String &rhs)
+ {
+     return strcmp(lhs.elements,rhs.elements) > 0
+ }
+ bool operator>=(const String &lhs,const String &rhs)
+ {
+     return strcmp(lhs.elements,rhs.elements) >= 0
+ }
 
 String::~String()
 {
 	free();
 }
-
 
 void String::free()
 {

@@ -9,7 +9,7 @@ int main()
 	//String s("zheng yinhao");
 	String s ("zheng yinh");
 	cout << s << endl;
-	String s1 = s;
+	String s1 = std::move(s);
 	cout << s1  << endl;
 	s1 = "hello word";
 	cout << s1  << " " << s1.length() << " " <<s1.size()<<endl;

@@ -14,10 +14,13 @@ public:
     String(const char *);
 	//拷贝构造函数
 	String(const String&);
+    //移动构造函数
+	String(String &&)noexcept;
 	//析构函数
 	~String();
 	//拷贝赋值运算符
 	String &operator=(const String&);
+	String &operator=(String &&) noexcept;
 	const char *c_str() const { return elements; }
 	size_t size() const { return end - elements; }
 	size_t length() const { return end - elements + 1; }

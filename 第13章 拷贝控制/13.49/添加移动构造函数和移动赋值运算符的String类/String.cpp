@@ -22,6 +22,13 @@ String::String(const String &rhs)
 	cout << "拷贝构造函数" << endl;
 }
 
+//移动构造函数
+String::String(String &&rhs)noexcept :elements(rhs.elements),end(rhs.end)
+{
+    rhs.elements = rhs.end = nullptr;
+}
+
+
 String &String::operator=(const String& rhs)
 {
 	auto newstr = alloc_n_copy(rhs.elements, rhs.end);
@@ -32,7 +39,21 @@ String &String::operator=(const String& rhs)
 	return *this;
 }
 
-std::ostream &operator<< (std::ostream &os,const String &s)
+
+String &String::operator=( String&& rhs)noexcept
+{
+	if(this != &rhs)
+    {
+        free();
+        elements = rhs.elements;
+        end = rhs.end;
+        rhs.elements = rhs.end = nullptr;
+        cout << "移动赋值运算符" << endl;
+    }
+    return *this;
+}
+
+std::ostream &operator<<(std::ostream &os,const String &s)
 {
     os << s.elements ;
     return os;
