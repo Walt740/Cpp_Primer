@@ -9,8 +9,15 @@ using namespace std;
 class StrBlobPtr;
 class StrBlob
 {
-    friend class StrBlobPtr;
-
+    friend class StrBlobPtr; //定义友元类
+    friend bool operator==(const StrBlob &lhs,const StrBlob &rhs)
+    {
+        return lhs.data == rhs.data; //所指向的vector相等
+    }
+    friend bool operator!=(const StrBlob &lhs,const StrBlob &rhs)
+    {
+        return !(lhs == rhs);
+    }
 public:
 	using size_type = vector<string>::size_type;
    // StrBlob();
@@ -82,6 +89,19 @@ private:
 class StrBlobPtr
 {
       friend bool eq(const StrBlobPtr&,const StrBlobPtr&);
+      friend bool operator== (const StrBlobPtr &lhs,const StrBlobPtr &rhs)
+      {
+          auto l = lhs.wptr.lock(),r = rhs.wptr.lock();
+          if(l == r)
+            //两个指针都为空，或指向相同的vector且curr指向相同元素时，相等，否则不等
+            return (!r || lhs.curr == rhs.curr);
+          else
+            return false;
+      }
+      friend bool operator!=(const StrBlobPtr &lhs,const StrBlobPtr &rhs)
+      {
+          return !(lhs == rhs);
+      }
   public:
       StrBlobPtr():curr(0) {}
       StrBlobPtr(StrBlob& a,size_t sz = 0) : wptr(a.data),curr(sz) {}
