@@ -89,6 +89,18 @@ public:
 		return data->back();
 	}
 
+	std::string &operator[] (std::size_t n)
+	{
+	    return data[n];
+	}
+	const std::string& operator[] (std::size_t n) const
+	{
+	    return data[n];
+	}
+
+
+
+
 private:
 	void check(size_type i, const string& msg) const
 	{
@@ -160,12 +172,33 @@ class StrBlobPtr
           else
             return false;
       }
-
+      friend StrBlobPtr operator+(int n)
+      {
+          StrBlobPtr ret = *this;
+          ret.curr  += n;
+          return ret;
+      }
+      friend StrBlobPtr operator-(int n)
+      {
+          StrBlobPtr ret = *this;
+          ret.curr  -= n;
+          return ret;
+      }
   public:
       StrBlobPtr():curr(0) {}
       StrBlobPtr(StrBlob& a,size_t sz = 0) : wptr(a.data),curr(sz) {}
       string& deref() const;
       StrBlobPtr& incr();
+      std::string& operator[] (std::size_t n) {return (*wptr.lock())[n];}
+      const std::string& operator[] (std::size_t n) const {return (*wptr.lock())[n];}
+      //14.27
+      //前缀
+      StrBlobPtr& operator++();
+      StrBlobPtr& operator--();
+      //后缀
+      StrBlobPtr operator++(int);
+      StrBlobPtr operator--(int);
+
   private:
       shared_ptr<vector<string>> check(size_t,const string&)const;
       weak_ptr<vector<string>> wptr;
@@ -222,3 +255,29 @@ inline neq(const StrBlobPtr & lhs,const StrBlobPtr &rhs)
 }
 
 
+//前缀
+StrBlobPtr& StrBlobPtr::operator++()
+{
+    check(curr,"increment past end of StrBlobPtr");
+    ++curr;
+    return *this;
+}
+StrBlobPtr&  StrBlobPtr::operator--()
+{
+    --curr;
+    check(-1,"decrement past begin of StrBlobPtr");
+    return *this;
+}
+//后缀
+StrBlobPtr  StrBlobPtr::operator++(int)
+{
+    StrBlobPtr ret = *this;
+    ++(*this);
+    return ret;
+}
+StrBlobPtr  StrBlobPtr::operator--(int)
+{
+    StrBlobPtr ret = *this;
+    --(*this);
+    return ret;
+}

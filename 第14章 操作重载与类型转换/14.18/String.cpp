@@ -50,19 +50,19 @@ bool operator!= (const String &lhs,const String &rhs)
 //String类的关系运算符就是比较两个字符串字典序的先后
  bool operator< (const String &lhs,const String &rhs)
  {
-     return strcmp(lhs.elements,rhs.elements) < 0
+     return strcmp(lhs.elements,rhs.elements) < 0;
  }
  bool operator<=(const String &lhs,const String &rhs)
  {
-     return strcmp(lhs.elements,rhs.elements) <= 0
+     return strcmp(lhs.elements,rhs.elements) <= 0;
  }
  bool operator> (const String &lhs,const String &rhs)
  {
-     return strcmp(lhs.elements,rhs.elements) > 0
+     return strcmp(lhs.elements,rhs.elements) > 0;
  }
  bool operator>=(const String &lhs,const String &rhs)
  {
-     return strcmp(lhs.elements,rhs.elements) >= 0
+     return strcmp(lhs.elements,rhs.elements) >= 0;
  }
 
 String::~String()
