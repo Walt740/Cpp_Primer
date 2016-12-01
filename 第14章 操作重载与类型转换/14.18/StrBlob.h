@@ -38,7 +38,7 @@ class StrBlob
 public:
 	using size_type = vector<string>::size_type;
    // StrBlob();
-	StrBlob() :data(std::make_shared<vector<string>>()) {}
+	StrBlob():data(std::make_shared<vector<string>>()) {}
 	StrBlob(std::initializer_list<string> il) : data(std::make_shared<vector<string>>(il)) {}
 
     StrBlobPtr begin(); //{return StrBlobPtr(*this);}
@@ -89,17 +89,17 @@ public:
 		return data->back();
 	}
 
-	std::string &operator[] (std::size_t n)
+	std::string &operator[](std::size_t n)
 	{
-	    return data[n];
-	}
-	const std::string& operator[] (std::size_t n) const
+	    return (*data)[n];
+
+	    //return data->operator*()[n];
+    }
+
+	const std::string &operator[](std::size_t n) const
 	{
-	    return data[n];
+	    return (*data)[n];
 	}
-
-
-
 
 private:
 	void check(size_type i, const string& msg) const
@@ -172,18 +172,7 @@ class StrBlobPtr
           else
             return false;
       }
-      friend StrBlobPtr operator+(int n)
-      {
-          StrBlobPtr ret = *this;
-          ret.curr  += n;
-          return ret;
-      }
-      friend StrBlobPtr operator-(int n)
-      {
-          StrBlobPtr ret = *this;
-          ret.curr  -= n;
-          return ret;
-      }
+
   public:
       StrBlobPtr():curr(0) {}
       StrBlobPtr(StrBlob& a,size_t sz = 0) : wptr(a.data),curr(sz) {}
@@ -198,7 +187,27 @@ class StrBlobPtr
       //后缀
       StrBlobPtr operator++(int);
       StrBlobPtr operator--(int);
-
+      std::string& operator*() const
+      {
+          auto p = check(curr,"dereference past end");
+          return (*p)[curr];
+      }
+      std::string* operator->() const
+      {
+          return &(this->operator*());
+      }
+      StrBlobPtr operator+(int n)
+      {
+          StrBlobPtr ret = *this;
+          ret.curr  += n;
+          return ret;
+      }
+      StrBlobPtr operator-(int n)
+      {
+          StrBlobPtr ret = *this;
+          ret.curr  -= n;
+          return ret;
+      }
   private:
       shared_ptr<vector<string>> check(size_t,const string&)const;
       weak_ptr<vector<string>> wptr;
@@ -280,4 +289,31 @@ StrBlobPtr  StrBlobPtr::operator--(int)
     StrBlobPtr ret = *this;
     --(*this);
     return ret;
+}
+
+
+class StrBlobPtr_pointer
+{
+public:
+    StrBlobPtr_pointer() = default;
+    StrBlobPtr_pointer(StrBlobPtr *p) : point(p) {}
+
+    StrBlobPtr& operator* ();
+    StrBlobPtr* operator->();
+
+private:
+    StrBlobPtr* point = nullptr;
+};
+
+//练习14.32
+//定义一个类令其含有指向StrBlobPtr对象的指针，为这个类定义重载的箭头运算符。
+
+StrBlobPtr &StrBlobPtr_pointer::operator* ()
+{
+    return *point;
+}
+
+StrBlobPtr *StrBlobPtr_pointer::operator->()
+{
+    return  &(this->operator*());
 }
