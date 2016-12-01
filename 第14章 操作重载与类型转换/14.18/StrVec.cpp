@@ -1,5 +1,5 @@
 //#include "StrVec.h"
-#include "../include/StrVec.h"
+#include "StrVec.h"
 #include <iostream>
 #include <initializer_list>
 #include <algorithm>
@@ -207,7 +207,7 @@ bool operator==(const StrVec &lhs ,const StrVec &rhs)
         return false;
     }
     //遍历两个StrVec中的每一个元素，如果不相等则返回失败
-    for(auto itr1 = lhs.begin(),itr2 = rhs.begin();itr1 != lsh.end() && itr2 != rhs.end(); itr1++,itr2++)
+    for(auto itr1 = lhs.begin(),itr2 = rhs.begin();itr1 != lhs.end() && itr2 != rhs.end(); itr1++,itr2++)
     {
         if(*itr1 != *itr2)
         {
@@ -225,7 +225,8 @@ bool operator !=(const StrVec &lhs,const StrVec &rhs)
 //两个StrVec的比较，需要手工编写代码逐个比较String
 bool operator< (const StrVec &lhs,const StrVec &rhs)
 {
-    for(auto p1 = lhs.begin(),p2 = rhs.begin();p1 != lhs.end()&& p2 != rhs.end(); p1++,p2++)
+    auto p1 = lhs.begin(),p2 = rhs.begin();
+    for(;p1 != lhs.end()&& p2 != rhs.end(); p1++,p2++)
 
         if(*p1 < *p2)   //之前的string都相等，当前的string更小
             return true;
@@ -242,7 +243,8 @@ bool operator< (const StrVec &lhs,const StrVec &rhs)
 }
 bool operator<=(const StrVec &lhs,const StrVec &rhs)
 {
-    for(auto p1 = lhs.begin(),p2 = rhs.begin();p1 != lhs.end()&& p2 != rhs.end(); p1++,p2++)
+    auto p1 = lhs.begin(),p2 = rhs.begin();
+    for(;p1 != lhs.end()&& p2 != rhs.end(); p1++,p2++)
         if(*p1 < *p2)   //之前的string都相等，当前的string更小
             return true;
         else if(*p1 > *p2) //之前的string都相等，当前的string更大
@@ -256,7 +258,8 @@ bool operator<=(const StrVec &lhs,const StrVec &rhs)
 }
 bool operator> (const StrVec &lhs,const StrVec &rhs)
 {
-    for(auto p1 = lhs.begin(),p2 = rhs.begin();p1 != lhs.end()&& p2 != rhs.end(); p1++,p2++)
+    auto p1 = lhs.begin(),p2 = rhs.begin();
+    for( ;p1 != lhs.end()&& p2 != rhs.end(); p1++,p2++)
     {
         if(*p1 < *p2)   //之前的string都相等，当前的string更小
             return false;
@@ -273,7 +276,8 @@ bool operator> (const StrVec &lhs,const StrVec &rhs)
 }
 bool operator>=(const StrVec &lhs,const StrVec &rhs)
 {
-    for(auto p1 = lhs.begin(),p2 = rhs.begin();p1 != lhs.end()&& p2 != rhs.end(); p1++,p2++)
+    auto p1 = lhs.begin(),p2 = rhs.begin();
+    for( ;p1 != lhs.end()&& p2 != rhs.end(); p1++,p2++)
     {
         if(*p1 < *p2)   //之前的string都相等，当前的string更小
             return false;

@@ -42,7 +42,8 @@ class StrVec
 
         std::string *begin() const {return elements;}
         std::string *end() const {return first_free;}
-
+        std::string &operator[](std::size_t n){return elements[n];}
+        const std::string &operator[](std::size_t n)const {return elements[n];}
     private:
         std::allocator<std::string>alloc; //分配元素
         std::string *elements; //指向数组首元素的指针
