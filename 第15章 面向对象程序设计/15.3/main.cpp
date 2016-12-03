@@ -2,7 +2,7 @@
 #include <string>
 using namespace std;
 
-
+//基类
 class Quote
 {
 public:
@@ -24,7 +24,7 @@ protected:
 
 };
 
-
+//派生类
 class Bulk_quote:public Quote  //Bulk_quote继承自Quote
 {
 public:
@@ -48,7 +48,10 @@ double Bulk_quote::net_price(size_t cnt) const
 }
 
 
-double print_total(std::ostream& os, const Quote& item, size_t n);
+//double print_total(std::ostream& os, const Quote& item, size_t n);
+/*在C++中，当我们使用基类的引用（或指针）调用一个虚函数时将发生动态绑定
+我们既能使用基类Quote的对象调用该函数，也能使用派生类Bulk_quote的对象调用它；
+*/
 double print_total(std::ostream &os, const Quote &item, size_t n)
 {
 	double ret = item.net_price(n);
@@ -105,6 +108,21 @@ int main()
     print_total(cout,quo,20);
     print_total(cout,bulk,10);
     print_total(cout,liq,30);
+
+
+//    Quote base;
+//    Bulk_quote* bulkP = &base;
+//    Bulk_quote& bulkRef = base;
+
+//    Bulk_quote bulk;
+//    Quote *itemP = &bulk;
+//    Bulk_quote *bulkP = itemP;
+
+
+//    Bulk_quote bulk;
+//    Quote item(bulk);
+//    item = bulk;
+
 	return 0;
 }
 
