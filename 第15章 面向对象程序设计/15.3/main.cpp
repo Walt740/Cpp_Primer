@@ -15,7 +15,10 @@ public:
 	virtual double net_price(std::size_t n) const { cout << "调用基类" <<endl ; return n * price; }
 
 	virtual ~Quote() = default;
-
+    virtual void debug()
+    {
+        cout << " bookNo = " << bookNo << " price = "<< price << endl;
+    }
 private:
 	std::string bookNo;
 
@@ -33,6 +36,14 @@ public:
         Quote(book,p),min_qty(qty),discount( disc) {}
     //覆盖基类的函数版本以实现基于大量购买的折扣政策
     virtual double net_price(std::size_t) const override;
+    //练习15.11
+    virtual void debug() override
+    {
+        //cout << "bookNo=" << bookNo << " price= " price << endl;
+        Quote::debug();//bookNo变量是private，所以不能直接访问bookNo
+                    //智只能调用基类的debug()函数来显示
+        cout << " min_qty = " << min_qty << " discount = " << discount<< endl;
+    }
 private:
     std::size_t min_qty = 0; //适用折扣政策的最低购买量
     double discount = 0.0; //以小数表示的折扣额
@@ -108,8 +119,8 @@ int main()
     print_total(cout,quo,20);
     print_total(cout,bulk,10);
     print_total(cout,liq,30);
-
-
+    quo.debug();
+    bulk.debug();
 //    Quote base;
 //    Bulk_quote* bulkP = &base;
 //    Bulk_quote& bulkRef = base;
