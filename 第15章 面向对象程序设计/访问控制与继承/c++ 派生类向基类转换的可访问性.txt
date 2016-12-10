@@ -1,0 +1,173 @@
+c++ 派生类向基类转换的可访问性
+对于c++面向对象一直很疑惑，这次决定下功夫把它弄明白
+
+一、派生类和基类之间的类型转换 首先理解，派生类含有基类的所有成分，只不过有些就算在派生类的成员函数也不能访问而已。
+
+（1）派生类和基类的自动转换只针对指针或引用类型。 只有指针和引用支持自动类型转换，同时，也只有指针和引用才可以静态类型和动态类型不同，这两个配合就完成了c++的最重要的多态。
+
+派生类到基类的自动类型转换也不是都能随便转换的。
+
+1.如果派生类以public继承基类，则是is a关系，用派生类可以完成基类的所有功能，所以可以在任意地方将派生类自动转换成基类，注意，这里都是指指针或引用，而不是对象。 比如：
+
+class A{}；
+
+class B：public A{}
+
+B b；
+
+void function（const A &）；
+
+这时就可以使用function（b），会默认把B类型转换成A类型。
+
+2.假定D继承B：
+
+不论D以什么方式继承B，D的成员函数和友员函数都能使用派生类向基类的转换；派生类向其直接基类的类型转换对于派生类的成员函数和友员函数来说永远是可访问的。
+
+例如：
+
+class B{}
+
+class D:private B                //这里以private或者protected或者public 都可以
+
+{
+
+      void f()
+
+      {
+
+           B * base=new D;                      //编译正确
+
+      }
+
+}
+
+如果不是成员函数（即用户代码），例如：
+
+class B{};
+class D:private B                //如果这里是public就可以，private或protected会错
+{
+
+      /*void f()
+
+      {
+           B * base=new D;                      
+      }
+      */
+
+};
+int main()
+{
+    B * b=new D;    //会出现编译错误,注意，这是用户代码
+};
+
+3.如果D继承B的方式是public或者protected，则D的派生类的成员或者友员可以使用D向Ｂ的类型转换；反之，如果D继承Ｂ的方式是private，则不能使用。
+
+class B{};
+
+class D:public B{}；//public或protected都可以
+
+class E:private D或者protected D或者public D
+
+{
+
+    void f()
+
+    {
+
+          B *b=new D;              //可以编译通过
+
+          D *d=new E;            //可以编译通过，这就是2介绍的情况。
+
+     }
+
+}；
+
+但是如果变成private继承：
+
+class B{};
+
+class D:private B{}；
+
+class E:private D或者protected D或者public D
+
+{
+
+    void f()
+
+    {
+
+          B *b=new D;              //错，不可以编译
+
+          D *d=new E;            //可以编译，这就上2介绍的情况
+
+     }
+
+}；
+
+4.附加下别人做的实验，所以实验均亲身验证，c++ primer真心厉害！
+
+//p489 派生类到基类转换的可访问性   
+#include<iostream>  
+using namespace std;  
+  
+class A{};  
+  
+class B:public A{};  
+class C:protected A{};  
+class D:private A{};  
+  
+class E:public B{};  
+class F:public C{};  
+class G:public D{};  
+  
+int main(){  
+    A *pb, *pc, *pd, *pe, *pf, *pg;  
+    pb = new B;     // 正确 public派生，可以转换[*B ---> *A].  
+    pc = new C;     // 错误 protected派生，不可转换[*C -\-> *A].  
+    pd = new D;     // 错误 private派生，不可转换[*D -\-> *A].  
+    pe = new E;     // 正确 public派生的子类，可以转换[*E ---> *A].  
+    pf = new F;     // 错误
+    pg = new G;     // 错误 private派生的子类，不可转换[*G -\-> *A].  
+    return 0;   
+}  
+用户代码是除成员函数、友元之外的代码。
+
+（2）不存在从基类到派生类的隐式类型转换，注意是隐式。这里也指的指针和引用
+
+因为如果开始时就是基类的类型，就根本不存在派生类的部分，所以转换肯定错。但是如果是基类的对象是派生类的一部分，指针指向的是基类对象，那就可以通过强制类型转换，如static_cast 或dynamic_cast转换成。
+
+例如：
+
+Quote base；
+
+Bulk_quote * bulkp=&base;   错，不能将基类转换成派生类
+
+即使一个基类指针或引用绑定在一个派生类对象上，我们也不能执行从基类到派生类转换：
+
+Bulk_quote bulk;
+
+Quote * itemP=&bulk;     //正确动态类型是Bulk_quote
+
+Bulk_quote * bulkp=itemP    //错误，不能将基类转换成派生类，因为itemP的静态类型是Quote，虽然动态类型已经变成了Bulk_quote。因为编译器是根据静态类型推断转换是否合法。但可以通过强制类型转换
+
+Bulk_quote * bulkp = static_cast<Bulk_quote> itemp;
+
+或者Bulk_quote * buklp=dynamic_cast<Bulk_quote>itemp;
+
+通过强制类型转换，覆盖掉编译器检查。
+
+（3）在对象之间不存在类型转换。
+
+对象之间不存在类型转换。
+
+例如：
+
+Bulk_quote bulk;   //派生类对象
+
+Quote item(bulk); // 这时会使用Quote::Quote(const Quote &)构造函数,我感觉这里也用到了派生类到基类的转换，这里有引用，如果要是用private继承是否就不行呢？回头试，果然如我所料，如果是以public继承，是可以将Bulk_quote转换成Quote的，可以编译通过，如果改成以private继承或者以protected继承，根本编译不过。如果用static_cast<Quote>强制类型转换也是不可以的，因为以private或protected继承，就不能从派生类转换成基类
+
+item=bulk；     //调用Quote：：operator=(const Quote &)，同上。
+
+就算是成功进行拷贝，这里会切割忽略Bulk_quote部分，值复制Bulk_quote中的Quote对象部分。
+
+ 

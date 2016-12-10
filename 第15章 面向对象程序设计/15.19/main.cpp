@@ -59,16 +59,16 @@ struct Derived_from_Public:public Pub_Derv
     }
 };
 
-//struct Derived_from_Private: public Priv_Derv
-//{
-//    //using Base::prot_mem;
-//    //int use_base() {return prot_mem;}
-//    void memfcn(Base &b)
-//    {
-//        b = *this;
-//        cout << "Derived_from_Private" << endl;
-//    }
-//};
+struct Derived_from_Private: public Priv_Derv
+{
+    //using Base::prot_mem;
+    //int use_base() {return prot_mem;}
+    void memfcn(Base &b)
+    {
+        b = *this;
+        cout << "Derived_from_Private" << endl;
+    }
+};
 
 struct Derived_from_Protected: protected Prot_Derv
 {
