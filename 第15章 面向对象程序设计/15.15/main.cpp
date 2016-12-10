@@ -77,7 +77,8 @@ private:
 
 
 //double print_total(std::ostream& os, const Quote& item, size_t n);
-/*在C++中，当我们使用基类的引用（或指针）调用一个虚函数时将发生动态绑定
+/*
+在C++中，当我们使用基类的引用（或指针）调用一个虚函数时将发生动态绑定
 我们既能使用基类Quote的对象调用该函数，也能使用派生类Bulk_quote的对象调用它；
 */
 double print_total(std::ostream &os, const Quote &item, size_t n)
@@ -96,6 +97,7 @@ class Limited_quote:public Disc_quote
 public:
     Limited_quote(const std::string &book,double price,std::size_t qty,double disc):
         Disc_quote(book,price,qty,disc) {}
+
     double net_price(size_t cnt) const override
     {
         if(cnt <= quantity)
