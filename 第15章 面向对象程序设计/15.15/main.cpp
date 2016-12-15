@@ -5,6 +5,7 @@ using namespace std;
 //基类
 class Quote
 {
+    friend bool operator != (const Quote& lhs, const Quote &rhs);
 public:
 	Quote() = default;
 	Quote(const std::string &b, double p) :
@@ -12,7 +13,34 @@ public:
 	{
 		cout << "基类的构造函数" << endl;
 	}
-
+    Quote(const Quote& q) : bookNo(q.bookNo),price(q.price)
+    {
+        std::cout << "基类的拷贝构造函数"<< std::endl ;
+    }
+    Quote(Quote &&q) noexcept :bookNo(std::move(q.bookNo)),price(std::move(q.price))
+    {
+        std:: cout <<"基类的移动构造函数"<< std::endl ;
+    }
+    Quote &operator= (const Quote& rhs)
+    {
+        if(*this != rhs)
+        {
+            bookNo = rhs.bookNo;
+            price = rhs.price;
+        }
+        std::cout << "拷贝赋值运算符" << std::endl ;
+        return *this;
+    }
+    Quote &operator=(Quote&& rhs) noexcept
+    {
+        if(*this != rhs)
+        {
+            bookNo = std::move(rhs.bookNo);
+            price  = std::move(rhs.price);
+        }
+        std:: cout << "移动赋值运算符" << endl ;
+        return *this;
+    }
 	std::string isbn() const { return bookNo; }
 	virtual double net_price(std::size_t n) const { cout << "调用基类" <<endl ; return n * price; }
 	//如果我们删除的是一个指向派生类对象的基类指针，则需要虚析构函数
@@ -31,6 +59,12 @@ protected:
 	double  price = 0.0;
 
 };
+
+bool operator != (const Quote& lhs, const Quote &rhs)
+{
+    return lhs.bookNo != rhs.bookNo && lhs.price != rhs.price;
+}
+
 //抽象基类
 class Disc_quote:public Quote
 {
@@ -50,6 +84,9 @@ protected:
     std::size_t quantity = 0; //折扣适用的购买量
     double discount = 0.0; //表示折扣的小数值
 };
+
+
+
 //派生类
 class Bulk_quote:public Disc_quote
 {
@@ -59,6 +96,32 @@ public:
         Disc_quote(book,price,qty,disc) {
 		cout << "派生类的构造函数" << endl;
 	}
+	//拷贝构造函数
+	Bulk_quote(const Bulk_quote& bq):Disc_quote(bq)
+	{
+	    std:: cout << "派生类的拷贝构造函数" << std::endl;
+	}
+	// move constructor
+
+    Bulk_quote(Bulk_quote &&bq) noexcept : Disc_quote(std::move(bq))
+    {
+        std::cout << "派生类的移动构造函数" << endl ;
+    }
+    Bulk_quote& operator= (const Bulk_quote &rhs)
+    {
+        Disc_quote:: operator= (rhs);
+        std:cout << "派生类的拷贝赋值运算符"  << endl ;
+        return *this;
+    }
+
+    Bulk_quote& operator= ( Bulk_quote &&rhs)
+    {
+        Disc_quote:: operator= (std::move(rhs));
+        std:cout << "派生类的移动赋值运算符"  << endl ;
+        return *this;
+    }
+
+
     ~Bulk_quote()
     {
         cout << "派生类的析构函数"<< endl ;
@@ -144,6 +207,7 @@ int main()
     Quote *itemP = new  Quote;
     delete itemP;
     itemP = new Bulk_quote("yinhao",10,1,20);
+
     delete itemP;
 
 

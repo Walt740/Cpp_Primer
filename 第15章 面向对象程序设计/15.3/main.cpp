@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <iso646.h>
 using namespace std;
 
 //基类
@@ -14,7 +15,10 @@ public:
 	std::string isbn() const { return bookNo; }
 	virtual double net_price(std::size_t n) const { cout << "调用基类" <<endl ; return n * price; }
 
-	virtual ~Quote() = default;
+    virtual ~Quote()
+    {
+        cout << "基类的析构函数" <<endl;
+    } //= default;
     virtual void debug()
     {
         cout << " bookNo = " << bookNo << " price = "<< price << endl;
@@ -27,6 +31,9 @@ protected:
 
 };
 
+
+
+
 //派生类
 class Bulk_quote:public Quote  //Bulk_quote继承自Quote
 {
@@ -34,6 +41,10 @@ public:
     Bulk_quote() = default;
     Bulk_quote(const std::string &book,double p,std::size_t qty,double disc):
         Quote(book,p),min_qty(qty),discount( disc) {}
+    ~Bulk_quote()
+    {
+        cout << "派生类的析构函数" <<endl;
+    } //= default;
     //覆盖基类的函数版本以实现基于大量购买的折扣政策
     virtual double net_price(std::size_t) const override;
     //练习15.11
@@ -113,14 +124,14 @@ private:
 
 int main()
 {
-    Quote quo("C++ Primer",30);
-    Bulk_quote bulk("C++ Primer",30,20,0.1); //折扣10%
-    Limited_quote liq("C++ Primer",30,20,0.1); //折扣10%
-    print_total(cout,quo,20);
-    print_total(cout,bulk,10);
-    print_total(cout,liq,30);
-    quo.debug();
-    bulk.debug();
+//    Quote quo("C++ Primer",30);
+//    Bulk_quote bulk("C++ Primer",30,20,0.1); //折扣10%
+//    Limited_quote liq("C++ Primer",30,20,0.1); //折扣10%
+//    print_total(cout,quo,20);
+//    print_total(cout,bulk,10);
+//    print_total(cout,liq,30);
+//    quo.debug();
+//    bulk.debug();
 //    Quote base;
 //    Bulk_quote* bulkP = &base;
 //    Bulk_quote& bulkRef = base;
@@ -133,7 +144,10 @@ int main()
 //    Bulk_quote bulk;
 //    Quote item(bulk);
 //    item = bulk;
-
+    Quote *itemP = new Quote; //静态类型与动态类型一致
+    delete itemP;
+    itemP = new Bulk_quote;
+    delete itemP;
 	return 0;
 }
 
