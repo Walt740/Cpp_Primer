@@ -3,12 +3,14 @@
 
 #include "Quote.h"
 
+//抽象基类
 class Disc_quote : public Quote
 {
 public:
-    Disc_quote(const string &book = "" ,double sales_price = 0.0,size_t qty =0,double disc = 0.0) :
+    Disc_quote(const std::string &book = "" ,double sales_price = 0.0,size_t qty =0,double disc = 0.0) :
         Quote(book,sales_price),quantity(qty),discount(disc)
     {}
+    //纯虚函数
     double net_price(size_t cnt) const = 0;
 protected:
     size_t quantity;
@@ -17,3 +19,7 @@ protected:
 
 
 #endif // DISC_QUOTE_H
+
+
+
+

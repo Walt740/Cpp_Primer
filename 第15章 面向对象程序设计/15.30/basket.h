@@ -1,10 +1,12 @@
 #ifndef BASKET_H
 #define BASKET_H
 
-#include <memory>
+
 #include "Quote.h"
 #include <set>
 #include "Bulk_quote.h"
+#include <memory>
+
 
 class Basket
 {
@@ -39,3 +41,5 @@ private:
 };
 
 #endif // BASKET_H
+
+

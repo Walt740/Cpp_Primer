@@ -7,23 +7,21 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="bin/Debug/15.30" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Debug/15" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
-					<Add directory="include" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="bin/Release/15.30" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Release/15" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
-					<Add directory="include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -34,12 +32,18 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="include/Bulk_quote.h" />
-		<Unit filename="include/Disc_quote.h" />
-		<Unit filename="include/Quote.h" />
-		<Unit filename="include/basket.h" />
+		<Unit filename="Bulk_quote.cpp" />
+		<Unit filename="Bulk_quote.h" />
+		<Unit filename="Disc_quote.h" />
+		<Unit filename="Quote.cpp" />
+		<Unit filename="Quote.h" />
+		<Unit filename="basket.cpp" />
+		<Unit filename="basket.h" />
+		<Unit filename="disc_quote.cpp" />
+		<Unit filename="limit_quote.cpp" />
+		<Unit filename="limit_quote.h" />
+		<Unit filename="log.txt" />
 		<Unit filename="main.cpp" />
-		<Unit filename="src/basket.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

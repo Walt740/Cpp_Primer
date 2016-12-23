@@ -1,5 +1,6 @@
 #include "basket.h"
 
+
 double Basket::total_receipt(std::ostream &os) const
 {
     double sum = 0.0;  // 保存实时计算出的总价格
@@ -13,7 +14,7 @@ double Basket::total_receipt(std::ostream &os) const
                  //打印该书籍对应的项目
                  sum += print_total(os,**iter,items.count(*iter));
              }
-    os << "Total Sale: " << sum << endl ;
+    os << "Total Sale: " << sum << std::endl ;
     return sum;
 }
 
